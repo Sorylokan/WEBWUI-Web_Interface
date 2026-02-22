@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -8,15 +10,33 @@ html,
 body {
     height: 100%;
     width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 body {
     display: flex;
     overflow: hidden;
+    position: relative;
+}
+
+/* Subtle animated gradient background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(6, 182, 212, 0.12) 0%, transparent 50%);
+    animation: gradientSpin 25s linear infinite;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes gradientSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .container {
@@ -24,4 +44,20 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100vh;
+    position: relative;
 }
+
+/* Optional: Custom cursor (uncomment to enable)
+.cursor {
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+    z-index: 9999;
+}
+*/

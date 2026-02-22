@@ -1,42 +1,44 @@
 :root {
-    --bg-main: #161B22;
-    --bg-header: #1F262E;
-    --bg-content: #2A313B;
-    --text-main: #E6E6E6;
-    --text-muted: #A0A0A0;
-    --text-bright: #F7F7F7;
-    --text-heading: #FFA08A;
-    --primary: #FF7755;
-    --primary-hover: #FFA08A;
-    --secondary: #A8BBD1;
-    --secondary-hover: #C3D1E0;
-    --shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+    --bg-main: #050505;
+    --bg-header: #0a0a0a;
+    --bg-content: #111111;
+    --text-main: #ffffff;
+    --text-muted: #888888;
+    --text-bright: #ffffff;
+    --text-heading: #7c3aed;
+    --primary: #7c3aed;
+    --primary-hover: #8b5cf6;
+    --secondary: #06b6d4;
+    --secondary-hover: #22d3ee;
+    --accent-gradient: linear-gradient(90deg, #7c3aed, #06b6d4);
+    --shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
 
-    --color-success: #57f287;
-    --color-danger: #c20000;
-    --color-warning: #faa81a;
-    --color-border: rgba(255, 255, 255, 0.03);
-    --color-border-light: rgba(255, 255, 255, 0.06);
-    --radius: 6px;
-    --radius-sm: 4px;
+    --color-success: #10b981;
+    --color-danger: #bb2020;
+    --color-warning: #f59e0b;
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-light: rgba(255, 255, 255, 0.12);
+    --radius: 8px;
+    --radius-sm: 6px;
     --spacing: 1rem;
-    --transition: all 0.18s ease;
+    --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Light Theme */
 :root[data-theme="light"] {
-    --bg-main: #d8dddf;
-    --bg-header: #e8ebeb;
-    --bg-content: #e8ebeb;
-    --text-main: #242423;
-    --text-muted: #333533;
-    --text-bright: #242423;
-    --text-heading: #E45D3D;
-    --primary: #E45D3D;
-    --primary-hover: #FF7755;
-    --secondary: #4D6D9A;
-    --secondary-hover: #3D5980;
-    --shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    --bg-main: #fafafa;
+    --bg-header: #ffffff;
+    --bg-content: #f5f5f5;
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --text-bright: #000000;
+    --text-heading: #7c3aed;
+    --primary: #7c3aed;
+    --primary-hover: #8b5cf6;
+    --secondary: #06b6d4;
+    --secondary-hover: #22d3ee;
+    --accent-gradient: linear-gradient(90deg, #7c3aed, #06b6d4);
+    --shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
 
     --color-border: rgba(0, 0, 0, 0.1);
     --color-border-light: rgba(0, 0, 0, 0.15);

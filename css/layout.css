@@ -6,8 +6,9 @@
     background-color: var(--bg-header);
     border-bottom: 1px solid var(--color-border);
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     position: relative;
+    backdrop-filter: blur(10px);
 }
 
 .header-left {
@@ -32,8 +33,9 @@
 }
 
 .back-button:hover {
-    background-color: var(--color-border);
-    color: var(--text-main);
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
     transform: translateY(-1px);
 }
 
@@ -62,8 +64,7 @@
     width: 42px;
     height: 42px;
     object-fit: contain;
-    border-radius: 8px;
-    -webkit-filter: drop-shadow(5px 5px 5px #5483cc50);
+    filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.5)5483cc50);
     filter: drop-shadow(5px 5px 5px #5482cc50);
 }
 

@@ -3,16 +3,10 @@
     color: var(--text-muted);
 }
 
-.divider {
-    height: 2px;
-    background-color: var(--bg-main);
-    margin: 0.5rem 0;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -20,10 +14,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-border-light);
+    background: rgba(124, 58, 237, 0.3);
     border-radius: 4px;
+    transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-border);
+    background: rgba(124, 58, 237, 0.5);
 }

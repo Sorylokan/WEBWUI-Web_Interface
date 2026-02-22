@@ -12,17 +12,17 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem;
-    background-color: rgba(255, 119, 85, 0.15);
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.15));
     border: 1px solid var(--color-border);
     font-weight: 600;
     font-size: 0.85rem;
-    color: var(--primary-hover);
+    color: var(--primary);
     cursor: pointer;
     user-select: none;
 }
 
 .embed-item-header:hover {
-    background-color: rgba(255, 119, 85, 0.2);
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.25), rgba(6, 182, 212, 0.2));
 }
 
 .embed-item-header::before {
@@ -313,6 +313,7 @@
     max-height: 100%;
     overflow-y: auto;
     border: 1px solid var(--color-border);
+    box-shadow: inset 0 0 20px rgba(124, 58, 237, 0.05);
 }
 
 .preview-placeholder {
@@ -372,6 +373,7 @@
     border: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
 }
 
 .embed-grid {
@@ -564,6 +566,7 @@
     overflow: auto;
     max-height: 300px;
     font-family: 'Courier New', monospace;
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.05);
     font-size: 0.8rem;
 }
 
@@ -666,7 +669,7 @@
 }
 
 .discord-spoiler {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(120, 120, 120, 0.6);
     color: transparent;
     border-radius: 3px;
     padding: 0 2px;
@@ -676,6 +679,6 @@
 
 .discord-spoiler:hover,
 .discord-spoiler.revealed {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(120, 120, 120, 0.3);
     color: var(--text-main);
 }
