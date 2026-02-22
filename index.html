@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Embed Builder with User Interface • [WEB•UI]</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="https://sorylokan.github.io/?p=content/streamerbot/extensions/webhook-embed-builder" class="back-button" title="Return to Extension Page">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                    <span>Retour</span>
+                </a>
+                <div class="header-separator"></div>
+                <div class="logo">
+                    <img src="WEBWUI_Icon.svg" alt="Logo">
+                    <span>Webhook Embed Builder</span>
+                </div>
+            </div>
+            <div class="header-actions header-connection">
+                <input id="wsAddress" class="header-input" type="text" placeholder="ws host" value="localhost">
+                <input id="wsPort" class="header-input" type="number" placeholder="port" value="8080">
+                <div class="connection-status">
+                    <span id="wsStatus" class="status-dot offline"></span>
+                    <span id="wsStatusText">Disconnected</span>
+                </div>
+                <button id="connectBtn" class="btn btn-primary btn-sm">Connect</button>
+                <button id="theme-toggle" class="btn btn-icon" title="Toggle theme">
+                    <svg id="theme-toggle-dark-icon" class="theme-icon" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg id="theme-toggle-light-icon" class="theme-icon hidden" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="notification" class="notification hidden"></div>
+        </header>
+
+        <div class="main-container">
+            <!-- Left Panel: Form with Tabs -->
+            <aside class="left-panel">
+                <!-- Tab Navigation -->
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="info">⚙️ Informations</button>
+                    <button class="tab-btn" data-tab="content">🎨 Content</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tabs-content">
+                    <!-- Informations Tab -->
+                    <div class="tab-content active" id="info" data-content="info">
+                        <div class="tab-section">
+                            <div class="form-group">
+                                <label for="webhookUrl">Discord Webhook URL</label>
+                                <div class="webhook-url-row">
+                                    <input type="text" id="webhookUrl" placeholder="(Optional) https://discord.com/api/webhooks/..." class="webhook-url-input">
+                                    <button id="testWebhookBtn" class="btn btn-secondary webhook-test-btn" disabled title="Enter a Discord Webhook URL to test">Test Webhook</button>
+                                </div>
+                                <div class="webhook-notes">
+                                    <small class="webhook-url-note">If the URL is not specified, you can define it directly in Streamer.bot using an argument.<br/> • Default argument: <code>WEBWUI_WebhookURL</code></small>
+                                    <small class="webhook-test-note">Note: StreamerBot arguments and variables <i>(%arguments% or ~Global Variable~)</i> do not work with the "TEST WEBHOOK" button. <br/> You must first save the payload in StreamerBot, and then, send it from a send action.</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="webhookUsername">Webhook Username</label>
+                                <input type="text" id="webhookUsername" placeholder="(Optional) Webhook Name" maxlength="80">
+                            </div>
+                            <div class="form-group">
+                                <label for="webhookAvatarUrl">Webhook Avatar URL</label>
+                                <input type="text" id="webhookAvatarUrl" placeholder="(Optional) https://...">
+                            </div>
+                            <div class="divider"></div>
+                            <div class="form-group">
+                                <small style="color: var(--primary); display: block; margin-bottom: 12px; font-size: 12px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">⚙️ Streamer.bot Parameters</small>
+                                <label for="globalVarName">Global Variable Name</label>
+                                <input type="text" id="globalVarName" placeholder="WEBWUI_WebhookPayload" >
+                            </div>
+                            <div class="button-group">
+                                <div class="button-row">
+                                    <button id="loadVarBtn" class="btn btn-secondary">Load Config</button>
+                                </div>
+                                <div class="divider"></div>
+                                <button id="clearBtn" class="btn btn-outline btn-danger save-text btn-full">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Tab -->
+                    <div class="tab-content" id="content" data-content="content">
+                        <div class="tab-section">
+                            <div class="form-group">
+                                <label for="msgContent">Message Content</label>
+                                <textarea id="msgContent" placeholder="Your message text..." rows="6" maxlength="2000"></textarea>
+                            </div>
+                            <div class="divider"></div>
+                            <button id="addEmbedBtn" class="btn btn-secondary btn-full">+ Add Embed</button>
+                            <div id="embedsContainer" class="embeds-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Action Button -->
+                <div class="save-section">
+                    <button id="saveToStreamerBtn" class="btn btn-primary btn-large save-text btn-full">
+                        Save to StreamerBot
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Panel: Preview -->
+            <main class="right-panel">
+                <div class="preview-header">
+                    <h2>Discord Preview</h2>
+                </div>
+
+                <div class="preview-container">
+                    <div id="previewMessage" class="discord-message">
+                        <div class="preview-placeholder">Your message will appear here</div>
+                    </div>
+                </div>
+
+                <!-- JSON Viewer -->
+                <div class="json-section">
+                    <div class="json-header">
+                        <h3>JSON Payload</h3>
+                        <button id="jsonCollapseBtn" class="btn btn-outline btn-sm">▼</button>
+                    </div>
+                    <div id="jsonContent" class="json-content">
+                        <div class="json-viewer">
+                            <pre id="jsonViewer">{}</pre>
+                        </div>
+                        <div class="json-actions">
+                            <button id="exportJsonBtn" class="btn btn-outline">📤 Export</button>
+                            <button id="copyJsonBtn" class="btn btn-outline" title="Click to copy formatted JSON, Ctrl+Click for minified JSON">📋 Copy JSON</button>
+                            <button id="importJsonBtn" class="btn btn-outline">📥 Import</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Modals Container (modular) -->
+        <div id="modals-container"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><a href="https://streamer.bot" class="external-link footer-link"><img width="16" height="16" src="https://streamer.bot/favicon.ico" class="footer-icon" /> Streamer.bot</a> extension • <b>Webhook Embed Builder with User Interface • [WEB•UI]</b> v1.4.0 • by <b>Sorylokan</b> • <a href="https://ko-fi.com/sorylokan" class="external-link footer-link">
+                <svg width="16" height="16" viewBox="0 0 48 48" fill="none" class="footer-icon">
+                    <circle cx="24" cy="24" r="20" fill="#1196cc"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M32.531 16H15.262c-.697 0-1.262.565-1.262 1.262v11.643a2.524 2.524 0 0 0 2.524 2.524h11.918a2.524 2.524 0 0 0 2.523-2.524v-1.646h1.566A5.47 5.47 0 0 0 38 21.79v-.321A5.47 5.47 0 0 0 32.531 16m-1.565 8.34v-5.421h1.427a2.71 2.71 0 1 1 0 5.42zm-6.051-4.911q-2.187 0-2.772 1.71-.585-1.71-2.772-1.71c-2.187 0-2.998 2.72-1.852 4.5q1.147 1.779 4.624 4.5 3.478-2.721 4.623-4.5c1.147-1.78.336-4.5-1.851-4.5" fill="#fff"/>
+                </svg>
+                Support my work on Ko-fi!
+            </a></p>
+        </footer>
+    </div>
+
+    <!-- Modal pour liens externes -->
+    <div id="popup-container" class="popup-container hidden">
+        <div class="popup" role="dialog" aria-modal="true" tabindex="-1">
+            <h2>Ouvrir le lien ?</h2>
+            <p class="popup-url"></p>
+            <div class="popup-buttons">
+                <button class="btn-cancel" id="cancel">Annuler</button>
+                <button class="btn-same-tab" id="same-tab">Cet onglet</button>
+                <button class="btn-new-tab" id="new-tab">Nouvel onglet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modules and initialize -->
+    <script type="module" src="app-modular.js"></script>
+</body>
+</html>

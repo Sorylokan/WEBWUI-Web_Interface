@@ -1,0 +1,216 @@
+.btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--text-main);
+    text-shadow: var(--bg-main) 1px 1px 10px;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--bg-header);
+    color: var(--text-main);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-border);
+    border-color: var(--color-border-light);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--secondary);
+    border: 1px solid var(--color-border);
+}
+
+.btn-outline:hover {
+    background-color: var(--bg-header);
+    color: var(--text-main);
+    border-color: var(--color-border-light);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: #e6e6e6;
+}
+
+.btn-danger:hover {
+    background-color: #da3633;
+}
+
+.btn-remove {
+    background-color: var(--color-danger);
+    color: #e6e6e6;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+}
+
+.btn-remove:hover {
+    background-color: #da3633;
+}
+
+.embed-add-field-btn {
+    background-color: var(--bg-header);
+    color: var(--text-main);
+    border: 1px solid var(--color-border);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    width: 100%;
+}
+
+.embed-add-field-btn:hover {
+    background-color: var(--color-border);
+    border-color: var(--color-border-light);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+}
+
+.btn-large {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.85rem;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    background-color: transparent;
+    color: var(--text-main);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+}
+
+.btn-icon:hover {
+    background-color: var(--bg-content);
+    color: var(--primary);
+}
+
+.theme-icon {
+    transition: var(--transition);
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+#connectBtn {
+    min-width: 100px;
+    width: 100px;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.button-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.button-row .btn {
+    flex: 1;
+}
+
+.button-group.vertical {
+    flex-direction: column;
+}
+
+.button-group.vertical .btn {
+    width: 100%;
+}
+
+.save-section {
+    padding: 1rem;
+    background-color: var(--bg-header);
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.footer-link {
+    color: var(--primary) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    border: 1px solid transparent;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.footer-link:hover {
+    color: var(--primary-hover) !important;
+    background-color: rgba(255, 119, 85, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.footer-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.footer-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+@keyframes footer-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.footer-link:hover .footer-icon {
+    animation: footer-pulse 0.6s ease-in-out;
+}

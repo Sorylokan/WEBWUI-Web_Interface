@@ -1,0 +1,29 @@
+.text-muted {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.divider {
+    height: 2px;
+    background-color: var(--bg-main);
+    margin: 0.5rem 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border);
+}
