@@ -1,0 +1,74 @@
+﻿/* ============================================================================
+   WEBWUI v2 - Discord Webhook Embed Builder - Full Stylesheet
+   ============================================================================ */
+
+@font-face {
+  font-family: 'gg sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://discord.com/assets/66d715454104d24e.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'gg sans';
+  font-style: normal;
+  font-weight: 500;
+  src: url('https://discord.com/assets/b272b33815319bae.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'gg sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://discord.com/assets/2df2c3ff74408972.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'gg sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://discord.com/assets/189422196a4f8b53.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  --bg-primary: #1e1f22;
+  --bg-secondary: #2b2d31;
+  --bg-tertiary: #313338;
+  --bg-floating: #111214;
+  --bg-input: #1e1f22;
+  --text-normal: #dbdee1;
+  --text-muted: #80848e;
+  --text-placeholder: #4e5058;
+  --brand: #5865f2;
+  --brand-hover: #4752c4;
+  --embed-border: #4e5058;
+  --success: #23a55a;
+  --danger: #f23f42;
+  --link: #00a8fc;
+  --embed-bg: #2b2d31;
+  --embed-accent: #5865f2;
+  --embed-text-size: 14px;
+  --radius: 4px;
+  --radius-lg: 8px;
+  --font-primary: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font: var(--font-primary);
+  --mono: 'gg mono', 'Source Code Pro', Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-normal);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.375;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+

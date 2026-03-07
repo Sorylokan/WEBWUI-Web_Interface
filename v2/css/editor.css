@@ -1,0 +1,81 @@
+﻿/* â”€â”€â”€ EDIT HINTS â”€â”€â”€ */
+.edit-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.preview-mode .edit-hint { display: none; }
+
+/* â”€â”€â”€ MARKDOWN TOOLBAR â”€â”€â”€ */
+.md-toolbar {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-floating);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-mode .md-toolbar { display: none; }
+
+.md-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.md-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-normal);
+}
+
+.md-separator {
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 2px 4px;
+}
+
+/* â”€â”€â”€ PREVIEW MODE message styling â”€â”€â”€ */
+.preview-mode .editable-content:empty { display: none; }
+.preview-mode .editable-content { pointer-events: none; }
+
+/* â”€â”€â”€ HOVER LABEL for edit zones â”€â”€â”€ */
+.editable-zone {
+  position: relative;
+}
+
+.edit-mode .editable-zone::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -18px;
+  left: 0;
+  font-size: 10px;
+  color: var(--brand);
+  opacity: 0;
+  transition: opacity 0.1s;
+  pointer-events: none;
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.edit-mode .editable-zone:hover::after,
+.edit-mode .editable-zone:focus-within::after {
+  opacity: 1;
+}
+
+/* â”€â”€â”€ SCROLLBAR embed â”€â”€â”€ */
+.preview-area::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
