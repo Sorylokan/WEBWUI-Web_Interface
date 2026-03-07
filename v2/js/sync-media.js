@@ -1,33 +1,45 @@
 ﻿// MODE TOGGLE
+function toggleMode() {
+  const newMode = currentMode === 'edit' ? 'preview' : 'edit';
+  setMode(newMode);
+}
+
 function setMode(mode) {
   currentMode = mode;
   const msg = document.getElementById('discordMessage');
-  const btnEdit = document.getElementById('btnEdit');
-  const btnPreview = document.getElementById('btnPreview');
-  const mdToolbar = document.getElementById('mdToolbar');
+  const editBtn = document.getElementById('modeEditBtn');
+  const previewBtn = document.getElementById('modePreviewBtn');
+
+  if (editBtn && previewBtn) {
+    const isEdit = mode === 'edit';
+    editBtn.classList.toggle('active', isEdit);
+    previewBtn.classList.toggle('active', !isEdit);
+    editBtn.setAttribute('aria-selected', String(isEdit));
+    previewBtn.setAttribute('aria-selected', String(!isEdit));
+  }
 
   if (mode === 'preview') {
     msg.classList.remove('edit-mode');
     msg.classList.add('preview-mode');
-    btnEdit.classList.remove('active');
-    btnPreview.classList.add('active');
-    if (mdToolbar) mdToolbar.style.display = 'none';
 
     // Render markdown in preview mode
     renderAllMarkdown();
 
-    // Disable contenteditable
+    // Lock inputs and textareas while preserving visual style
+    msg.querySelectorAll('input, textarea').forEach(el => {
+      el.readOnly = true;
+    });
     msg.querySelectorAll('[contenteditable]').forEach(el => {
       el.setAttribute('contenteditable', 'false');
     });
   } else {
     msg.classList.remove('preview-mode');
     msg.classList.add('edit-mode');
-    btnEdit.classList.add('active');
-    btnPreview.classList.remove('active');
-    if (mdToolbar) mdToolbar.style.display = 'flex';
 
-    // Re-enable contenteditable
+    // Re-enable inputs and textareas
+    msg.querySelectorAll('input, textarea').forEach(el => {
+      el.readOnly = false;
+    });
     msg.querySelectorAll('[contenteditable]').forEach(el => {
       el.setAttribute('contenteditable', 'true');
     });
@@ -101,19 +113,20 @@ const rawText = {};
 
 function onContentEdit(id) {
   const el = document.getElementById(id);
-  rawText[id] = el.innerText || el.textContent;
+  rawText[id] = getRawEditableText(el);
   updateJson();
 }
 
 function renderAllMarkdown() {
   const msg = document.getElementById('msgContent');
-  if (msg) {
-    const raw = rawText.msgContent || msg.innerText || '';
+  if (msg && msg.value === undefined) {
+    const raw = rawText.msgContent || msg.innerText || msg.textContent || '';
     rawText.msgContent = raw;
     msg.innerHTML = parseDiscordMarkdown(raw);
   }
 
   document.querySelectorAll('.embed-description-field').forEach((el, idx) => {
+    if (el.value !== undefined) return;
     const key = `embed-desc-${idx}`;
     const raw = el.innerText || el.dataset.raw || rawText[key] || '';
     rawText[key] = raw;
@@ -122,6 +135,7 @@ function renderAllMarkdown() {
   });
 
   document.querySelectorAll('.embed-title-field').forEach((el, idx) => {
+    if (el.value !== undefined) return;
     const key = `embed-title-${idx}`;
     const raw = el.innerText || el.dataset.raw || rawText[key] || '';
     rawText[key] = raw;
@@ -139,24 +153,29 @@ function renderAllMarkdown() {
 function restoreRawText() {
   const msg = document.getElementById('msgContent');
   if (msg && rawText.msgContent !== undefined) {
-    msg.innerText = rawText.msgContent;
+    if (msg.value !== undefined) msg.value = rawText.msgContent;
+    else msg.innerText = rawText.msgContent;
   }
 
   document.querySelectorAll('.embed-description-field').forEach((el, idx) => {
     const key = `embed-desc-${idx}`;
     if (rawText[key] !== undefined) {
-      el.innerText = rawText[key];
+      if (el.value !== undefined) el.value = rawText[key];
+      else el.innerText = rawText[key];
     } else if (el.dataset.raw !== undefined) {
-      el.innerText = el.dataset.raw;
+      if (el.value !== undefined) el.value = el.dataset.raw;
+      else el.innerText = el.dataset.raw;
     }
   });
 
   document.querySelectorAll('.embed-title-field').forEach((el, idx) => {
     const key = `embed-title-${idx}`;
     if (rawText[key] !== undefined) {
-      el.innerText = rawText[key];
+      if (el.value !== undefined) el.value = rawText[key];
+      else el.innerText = rawText[key];
     } else if (el.dataset.raw !== undefined) {
-      el.innerText = el.dataset.raw;
+      if (el.value !== undefined) el.value = el.dataset.raw;
+      else el.innerText = el.dataset.raw;
     }
   });
 
@@ -170,6 +189,9 @@ function restoreRawText() {
 
 function getRawEditableText(el) {
   if (!el) return '';
+  // For inputs and textareas, use value
+  if (el.value !== undefined) return el.value;
+  // For legacy contenteditable, use dataset.raw first, then innerText
   if (el.dataset && typeof el.dataset.raw === 'string') return el.dataset.raw;
   return el.innerText || '';
 }
@@ -177,7 +199,28 @@ function getRawEditableText(el) {
 // MARKDOWN TOOLBAR
 function insertMd(before, after) {
   const el = lastFocused;
-  if (!el || !el.isContentEditable) return;
+  if (!el) return;
+
+  if (el.value !== undefined) {
+    el.focus();
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? start;
+    const value = el.value || '';
+    const selectedText = value.slice(start, end);
+    const nextValue = value.slice(0, start) + before + selectedText + after + value.slice(end);
+
+    el.value = nextValue;
+
+    const nextCaret = selectedText ? start + before.length + selectedText.length + after.length : start + before.length;
+    el.selectionStart = nextCaret;
+    el.selectionEnd = nextCaret;
+
+    if (el.id) onContentEdit(el.id);
+    else updateJson();
+    return;
+  }
+
+  if (!el.isContentEditable) return;
   el.focus();
 
   const sel = window.getSelection();

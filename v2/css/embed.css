@@ -12,7 +12,7 @@
 .embed-color-capsule {
   position: absolute;
   top: 8px;
-  left: -50px;
+  left: -60px;
   z-index: 3;
   display: inline-flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
   opacity: 0;
   transform: translateX(-3px);
   pointer-events: none;
-  transition: opacity 0.15s, transform 0.15s;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .embed-wrapper:hover .embed-color-capsule,
@@ -51,7 +51,7 @@
   cursor: pointer;
 }
 
-.embed-capsule-trash {
+.embed-capsule-btn {
   width: 28px;
   height: 28px;
   border: 1px solid rgba(255,255,255,0.16);
@@ -62,12 +62,31 @@
   line-height: 26px;
   text-align: center;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
 }
 
-.embed-capsule-trash:hover {
+.embed-capsule-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.24);
+}
+
+.embed-capsule-btn.trash:hover {
   background: var(--danger);
   border-color: transparent;
   color: #fff;
+}
+
+.embed-capsule-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.embed-capsule-btn:disabled:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.16);
 }
 
 .embed {
@@ -174,28 +193,49 @@
   box-shadow: 0 0 0 1px rgba(88,101,242,0.35);
 }
 
-/* Embed editable fields */
+/* Embed editable fields - inputs and textareas */
 .embed-field-editable {
   display: block;
   width: 100%;
   min-height: 20px;
   outline: none;
-  border-radius: 3px;
- padding: 0;
- margin: 0;
-  word-break: normal;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  transition: all 0.15s ease;
 }
 
-.embed-field-editable:empty::before {
-  content: attr(data-placeholder);
-  color: var(--text-placeholder);
-  font-style: italic;
-  pointer-events: none;
+.embed-field-editable::placeholder {
+  color: rgba(255,255,255,0.3);
 }
 
-/* Hide empty optional fields in preview mode */
+/* In edit mode, add visible borders */
+.edit-mode .embed-field-editable[type="text"],
+.edit-mode textarea.embed-field-editable {
+  border-radius: 4px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(88,101,242,0.2);
+}
+
+.edit-mode .embed-field-editable[type="text"]:hover,
+.edit-mode textarea.embed-field-editable:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(88,101,242,0.35);
+}
+
+.edit-mode .embed-field-editable[type="text"]:focus,
+.edit-mode textarea.embed-field-editable:focus {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(88,101,242,0.2);
+}
+
+/* Hide empty fields in preview mode */
 .preview-mode .embed-field-editable:empty {
   display: none;
 }

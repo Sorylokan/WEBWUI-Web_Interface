@@ -55,19 +55,19 @@ function applyPayload(payload) {
   activeEmbedId = 1;
 
   const username = source.username || '';
-  const avatar = source.avatar_url || '';
   const content = source.content || '';
   const embeds = (source.embeds && source.embeds.length) ? source.embeds : [{}];
 
-  document.getElementById('panelUsername').value = username;
-  document.getElementById('panelAvatar').value = avatar;
+  const usernameEl = document.getElementById('usernameEl');
+  if (usernameEl) usernameEl.value = username;
+  updateInitial(username);
+  
   if (payload && typeof payload === 'object' && payload.WebHookUrl !== undefined) {
     document.getElementById('webhookUrl').value = payload.WebHookUrl || '';
   }
 
-  document.getElementById('usernameEl').innerText = username;
-  updateInitial(username);
-  syncAvatar(avatar);
+  const msgContentEl = document.getElementById('msgContent');
+  if (msgContentEl) msgContentEl.value = content;
 
   const msgEl = document.getElementById('msgContent');
   msgEl.innerText = content;
@@ -270,8 +270,7 @@ function saveToLocalStorage() {
   saveTimeout = setTimeout(() => {
     try {
       const data = {
-        username: document.getElementById('panelUsername').value || '',
-        avatar: document.getElementById('panelAvatar').value || '',
+        username: document.getElementById('usernameEl').value || '',
         webhookUrl: document.getElementById('webhookUrl').value || '',
         payloadName: document.getElementById('payloadName').value || '',
         jsonPayload: document.getElementById('jsonOutput').value || '{}'
@@ -290,13 +289,11 @@ function loadFromLocalStorage() {
     if (!data) return;
     
     const config = JSON.parse(data);
-    if (config.username) document.getElementById('panelUsername').value = config.username;
-    if (config.avatar) document.getElementById('panelAvatar').value = config.avatar;
+    if (config.username) document.getElementById('usernameEl').value = config.username;
     if (config.webhookUrl) document.getElementById('webhookUrl').value = config.webhookUrl;
     if (config.payloadName) document.getElementById('payloadName').value = config.payloadName;
     
     syncUsername(config.username || '');
-    syncAvatar(config.avatar || '');
     
     if (config.jsonPayload && config.jsonPayload !== '{}') {
       try {

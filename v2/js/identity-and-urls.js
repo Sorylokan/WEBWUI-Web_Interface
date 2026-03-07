@@ -1,14 +1,13 @@
 ﻿// USERNAME SYNC
 function onUsernameEdit(el) {
-  const val = el.innerText || '';
-  document.getElementById('panelUsername').value = val;
+  const val = el.value || '';
   updateInitial(val);
   updateJson();
 }
 
 function syncUsername(val) {
   const el = document.getElementById('usernameEl');
-  el.innerText = val;
+  el.value = val;
   updateInitial(val);
   updateJson();
 }

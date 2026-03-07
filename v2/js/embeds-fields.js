@@ -164,7 +164,9 @@ function addEmbed() {
   div.setAttribute('onclick', `setActiveEmbed(${id}, this)`);
   div.innerHTML = `
     <div class="embed-color-capsule" title="Embed tools">
-      <button class="embed-capsule-trash" onclick="removeEmbed(this, event)" title="Delete this embed">&#128465;</button>
+      <button class="embed-capsule-btn" onclick="moveEmbedUp(this, event)" title="Move embed up">↑</button>
+      <button class="embed-capsule-btn" onclick="moveEmbedDown(this, event)" title="Move embed down">↓</button>
+      <button class="embed-capsule-btn trash" onclick="removeEmbed(this, event)" title="Delete this embed">🗑️</button>
       <input type="color" value="#5865f2" oninput="syncColorFromCapsule(this)" onchange="syncColorFromCapsule(this)" onclick="event.stopPropagation()" title="Embed color">
     </div>
     <div class="embed" data-embed-color="#5865f2" style="border-left-color:#5865f2;">
@@ -211,6 +213,31 @@ function addEmbed() {
 
   wrappers.appendChild(div);
   setActiveEmbed(id, div);
+  updateJson();
+}
+
+// EMBED REORDERING
+function moveEmbedUp(sourceEl, event) {
+  if (event) event.stopPropagation();
+  const wrapper = sourceEl.closest('.embed-wrapper');
+  if (!wrapper) return;
+  
+  const prev = wrapper.previousElementSibling;
+  if (!prev || !prev.classList.contains('embed-wrapper')) return;
+  
+  wrapper.parentNode.insertBefore(wrapper, prev);
+  updateJson();
+}
+
+function moveEmbedDown(sourceEl, event) {
+  if (event) event.stopPropagation();
+  const wrapper = sourceEl.closest('.embed-wrapper');
+  if (!wrapper) return;
+  
+  const next = wrapper.nextElementSibling;
+  if (!next || !next.classList.contains('embed-wrapper')) return;
+  
+  wrapper.parentNode.insertBefore(next, wrapper);
   updateJson();
 }
 

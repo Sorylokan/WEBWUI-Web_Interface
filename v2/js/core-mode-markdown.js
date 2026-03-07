@@ -13,37 +13,50 @@ const LOCALSTORAGE_DELAY = 400;
 let saveTimeout = null;
 
 function enforceContentEditableLimit(el) {
-  if (!el || !el.isContentEditable) return false;
+  if (!el) return false;
   const maxChars = Number(el.dataset.maxChars || 0);
   if (!maxChars || Number.isNaN(maxChars)) return false;
 
-  const current = el.innerText || '';
+  // For input/textarea (value) or contenteditable (text)
+  const current = el.value !== undefined ? el.value : (el.innerText || '');
   if (current.length <= maxChars) return false;
 
   const trimmed = current.slice(0, maxChars);
-  el.innerText = trimmed;
-
-  const selection = window.getSelection();
-  if (selection) {
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
+  
+  if (el.value !== undefined) {
+    el.value = trimmed;
+  } else {
+    el.innerText = trimmed;
+    const selection = window.getSelection();
+    if (selection) {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 
   return true;
 }
 
+// Handle input/textarea events
 document.addEventListener('input', e => {
-  if (!e.target?.isContentEditable) return;
-  e.target.dataset.raw = e.target.innerText || '';
-  enforceContentEditableLimit(e.target);
+  // For inputs and textareas
+  if (e.target?.tagName === 'INPUT' || e.target?.tagName === 'TEXTAREA') {
+    enforceContentEditableLimit(e.target);
+    updateJson();
+  }
+  // For legacy contenteditable
+  if (e.target?.isContentEditable) {
+    e.target.dataset.raw = e.target.innerText || '';
+    enforceContentEditableLimit(e.target);
+  }
 });
 
 // Track cursor for toolbar insertions
 document.addEventListener('focusin', e => {
-  if (e.target.isContentEditable) {
+  if (e.target?.tagName === 'TEXTAREA' || e.target?.isContentEditable) {
     lastFocused = e.target;
   }
 });

@@ -1,8 +1,7 @@
 ﻿// JSON BUILDER
 function updateJson() {
-  const username = document.getElementById('usernameEl').innerText.trim() || undefined;
-  const avatarUrl = document.getElementById('panelAvatar').value.trim() || undefined;
-  const msgContent = (rawText['msgContent'] ?? document.getElementById('msgContent').innerText ?? '').trim();
+  const username = document.getElementById('usernameEl').value.trim() || undefined;
+  const msgContent = document.getElementById('msgContent').value.trim() || '';
 
   // Save advanced fields to active embed (timestamp from left panel only)
   const activeWrapper = document.querySelector(`.embed-wrapper[data-embed-id="${activeEmbedId}"]`);
@@ -18,8 +17,8 @@ function updateJson() {
     const colorHex = embedEl?.dataset.embedColor || '#5865f2';
     const title = getRawEditableText(wrapper.querySelector('.embed-title-field')).trim() || undefined;
     const description = getRawEditableText(wrapper.querySelector('.embed-description-field')).trim() || undefined;
-    const author = wrapper.querySelector('.embed-author-name')?.innerText.trim() || undefined;
-    const footer = wrapper.querySelector('.embed-footer-text')?.innerText.trim() || undefined;
+    const author = getRawEditableText(wrapper.querySelector('.embed-author-name')).trim() || undefined;
+    const footer = getRawEditableText(wrapper.querySelector('.embed-footer-text')).trim() || undefined;
     const imageUrl = wrapper.querySelector('.embed-image')?.classList.contains('has-image') ? wrapper.querySelector('.embed-image')?.src : undefined;
     const thumbUrl = wrapper.querySelector('.embed-thumbnail')?.classList.contains('has-image') ? wrapper.querySelector('.embed-thumbnail')?.src : undefined;
 
@@ -96,7 +95,6 @@ function updateJson() {
     embeds
   };
   if (username) payload.username = username;
-  if (avatarUrl) payload.avatar_url = avatarUrl;
 
   const webhookUrl = document.getElementById('webhookUrl')?.value?.trim() || '';
   const wrapped = {

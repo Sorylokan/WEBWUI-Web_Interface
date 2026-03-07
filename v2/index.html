@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Embed Editor</title>
+<link rel="stylesheet" href="reset.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">D</div>
+  <span class="header-title">Discord Embed Editor</span>
+
+  <div class="mode-toggle" id="modeToggle" role="tablist" aria-label="Editor mode">
+    <button class="mode-btn active" id="modeEditBtn" onclick="setMode('edit')" type="button" role="tab" aria-selected="true">✏️ Edit</button>
+    <button class="mode-btn" id="modePreviewBtn" onclick="setMode('preview')" type="button" role="tab" aria-selected="false">👁 Preview</button>
+  </div>
+
+  <!-- Markdown toolbar (shown in edit mode) -->
+  <div class="md-toolbar" id="mdToolbar">
+    <button class="md-btn" title="Bold" onclick="insertMd('**','**')"><strong>B</strong></button>
+    <button class="md-btn" title="Italic" onclick="insertMd('*','*')"><em>I</em></button>
+    <button class="md-btn" title="Underline" onclick="insertMd('__','__')"><u>U</u></button>
+    <button class="md-btn" title="Strikethrough" onclick="insertMd('~~ ','~~')"><s>S</s></button>
+    <div class="md-separator"></div>
+    <button class="md-btn" title="Spoiler" onclick="insertMd('||','||')">||sp||</button>
+    <button class="md-btn" title="Inline code" onclick="insertMd('`','`')">`code`</button>
+    <button class="md-btn" title="Code block" onclick="insertMd('```\n','\n```')">```block```</button>
+    <div class="md-separator"></div>
+    <button class="md-btn" title="Quote" onclick="insertMd('> ','')"> &gt; quote</button>
+    <button class="md-btn" title="H1" onclick="insertMd('# ','')">H1</button>
+    <button class="md-btn" title="H2" onclick="insertMd('## ','')">H2</button>
+    <button class="md-btn" title="H3" onclick="insertMd('### ','')">H3</button>
+    <button class="md-btn" title="Link" onclick="insertMd('[','](url)')" >🔗</button>
+  </div>
+
+
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT PANEL -->
+  <div class="panel">
+
+    <!-- Webhook URL -->
+    <div class="panel-section" id="sec-webhook">
+      <div class="panel-section-header" onclick="toggleSection('sec-webhook')">
+        <span class="panel-section-label">🔗 Webhook</span>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-row">
+          <label class="form-label">Webhook URL</label>
+          <input type="url" class="form-input" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Metadata -->
+    <div class="panel-section" id="sec-metadata">
+      <div class="panel-section-header" onclick="toggleSection('sec-metadata')">
+        <span class="panel-section-label">⚙️ Media & Timestamp</span>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-row">
+          <label class="form-label">Embed Image URL</label>
+          <input type="url" class="form-input" id="embedImageUrl" placeholder="https://..." oninput="syncEmbedImage(this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Thumbnail URL</label>
+          <input type="url" class="form-input" id="embedThumbUrl" placeholder="https://..." oninput="syncThumbnail(this.value)">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Timestamp</label>
+          <select class="form-input" id="timestampMode" onchange="updateJson()">
+            <option value="none">None</option>
+            <option value="auto">Auto (now)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-row" id="timestampCustomRow" style="display:none;">
+          <label class="form-label">Date/Time</label>
+          <input type="datetime-local" class="form-input" id="timestampCustom" onchange="updateJson()">
+        </div>
+      </div>
+    </div>
+
+    <!-- JSON raw -->
+    <div class="panel-section" id="sec-json">
+      <div class="panel-section-header" onclick="toggleSection('sec-json')">
+        <span class="panel-section-label">{ } JSON Payload</span>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="panel-body">
+        <textarea class="form-input" id="jsonOutput" rows="12" readonly style="font-family:var(--mono);font-size:12px;resize:vertical;"></textarea>
+        <div class="actions-grid" style="margin-top:8px;">
+          <button onclick="copyJson()">📋 Copy JSON</button>
+          <button onclick="exportJson()">📤 Export JSON</button>
+          <button onclick="openImportDialog()">📁 Import JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streamer.bot Connection -->
+    <div class="panel-section" id="sec-websocket">
+      <div class="panel-section-header" onclick="toggleSection('sec-websocket')">
+        <span class="panel-section-label">🔌 Streamer.bot Connection</span>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-row">
+          <label class="form-label">Host</label>
+          <input id="wsAddress" class="form-input" type="text" value="localhost" placeholder="localhost">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Port</label>
+          <input id="wsPort" class="form-input" type="number" value="8080" placeholder="8080">
+        </div>
+        <div class="ws-status" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text-muted);">
+          <span id="wsStatus" class="status-dot"></span>
+          <span id="wsStatusText">Disconnected</span>
+        </div>
+        <button id="connectBtn" class="form-input" onclick="toggleWebSocket()" style="cursor:pointer;font-weight:600;background:var(--bg-tertiary);border-color:rgba(255,255,255,0.15);">Connect</button>
+      </div>
+    </div>
+
+    <!-- Streamer.bot -->
+    <div class="panel-section" id="sec-send" style="margin-top:auto;">
+      <div class="panel-body">
+        <div class="form-row">
+          <label class="form-label">Streamer.bot payload name</label>
+          <input id="payloadName" class="form-input" type="text" placeholder="WEBWUI_WebhookPayload">
+        </div>
+
+        <div class="actions-grid" style="margin-top:8px;">
+          <button onclick="savePayloadToStreamerBot()">💾 Save SB</button>
+          <button onclick="loadPayloadFromStreamerBot()">📥 Load SB</button>
+        </div>
+        <div style="margin-top:8px;">
+          <button onclick="testWebhook()" style="width:100%;padding:8px;background:var(--bg-tertiary);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);color:var(--text-normal);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;">🧪 Test Webhook</button>
+        </div>
+        <input id="importJsonFile" type="file" accept="application/json,.json" style="display:none" onchange="handleImportFile(event)">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CENTRAL PREVIEW AREA -->
+  <div class="preview-area" id="previewArea">
+
+    <div class="discord-message edit-mode" id="discordMessage">
+
+      <!-- Message Header: Avatar + Username -->
+      <div class="msg-header">
+        <div class="msg-avatar" id="avatarEl" title="Change avatar (paste a URL in the panel)">
+          <span id="avatarInitial">B</span>
+          <img id="avatarImg" src="" alt="" style="display:none;">
+        </div>
+        <div class="msg-meta">
+          <div class="msg-username-row">
+            <input
+              type="text"
+              class="editable-username"
+              id="usernameEl"
+              placeholder="BotName"
+              value="BotName"
+              spellcheck="false"
+              oninput="onUsernameEdit(this)"
+            >
+            <span class="msg-timestamp" id="msgTimestamp">Today at 12:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message content -->
+      <div class="msg-content-wrap">
+        <div class="editable-zone" data-label="Message" style="margin-bottom:6px;">
+          <textarea
+            class="editable-content rendered"
+            id="msgContent"
+            placeholder="Message content (optional)..."
+            data-max-chars="2000"
+            spellcheck="false"
+            oninput="onContentEdit('msgContent')"
+            onpaste="handlePaste(event)"></textarea>
+        </div>
+
+        <!-- EMBEDS -->
+        <div id="embedWrappers">
+        <div class="embed-wrapper active" data-embed-id="1" onclick="setActiveEmbed(1, this)">
+          <div class="embed-color-capsule" title="Embed tools">
+            <button class="embed-capsule-btn" onclick="moveEmbedUp(this, event)" title="Move embed up">↑</button>
+            <button class="embed-capsule-btn" onclick="moveEmbedDown(this, event)" title="Move embed down">↓</button>
+            <button class="embed-capsule-btn trash" onclick="removeEmbed(this, event)" title="Delete this embed">🗑️</button>
+            <input type="color" value="#5865f2" oninput="syncColorFromCapsule(this)" onchange="syncColorFromCapsule(this)" onclick="event.stopPropagation()" title="Embed color">
+          </div>
+          <div class="embed" id="embedEl" data-embed-color="#5865f2">
+            <div class="embed-inner">
+
+              <!-- Author -->
+              <div class="embed-author-row editable-zone" data-label="Author">
+                <div class="embed-author-icon" id="authorIconEl"></div>
+              <input
+                type="text"
+                class="embed-field-editable embed-author-name"
+                placeholder="Author name"
+                data-max-chars="256"
+                id="embedAuthor"
+                spellcheck="false"
+                oninput="updateJson()"
+              />
+              </div>
+              <div class="embed-url-row" data-inline-group="author">
+                <span class="embed-url-icon">🔗</span>
+                <input class="embed-inline-url" type="url" data-inline-url="authorUrl" placeholder="Author URL (https://...)" oninput="syncInlineUrl('authorUrl', this, event)">
+              </div>
+              <div class="embed-url-row" data-inline-group="author">
+                <span class="embed-url-icon">🔗</span>
+                <input class="embed-inline-url" type="url" data-inline-url="authorIcon" placeholder="Author icon URL (https://...)" oninput="syncInlineUrl('authorIcon', this, event)">
+              </div>
+
+              <!-- Title -->
+              <div class="editable-zone" data-label="Title">
+              <input
+                type="text"
+                class="embed-field-editable embed-title-field"
+                placeholder="Embed title"
+                data-max-chars="256"
+                id="embedTitle"
+                spellcheck="false"
+                oninput="onContentEdit('embedTitle')"
+              />
+              </div>
+              <div class="embed-url-row" data-inline-group="title">
+                <span class="embed-url-icon">🔗</span>
+                <input class="embed-inline-url" type="url" data-inline-url="titleUrl" placeholder="Title URL (https://...)" oninput="syncInlineUrl('titleUrl', this, event)">
+              </div>
+
+              <!-- Description -->
+              <div class="editable-zone" data-label="Description">
+              <textarea
+                class="embed-field-editable embed-description-field rendered"
+                placeholder="Description (supports Discord markdown)..."
+                data-max-chars="4096"
+                id="embedDescription"
+                spellcheck="false"
+                oninput="onContentEdit('embedDescription')"
+                onpaste="handlePaste(event)"></textarea>
+              </div>
+
+              <!-- Dynamic fields -->
+              <div class="embed-fields" id="embedFieldsContainer"></div>
+
+              <!-- Add field btn -->
+              <div class="add-field-btn" onclick="addField(this)">
+                <span>+</span> Add field
+              </div>
+
+              <!-- Image -->
+              <img class="embed-image" id="embedImage" src="" alt="">
+
+              <!-- Footer -->
+              <div class="embed-footer-row">
+                <div class="embed-footer-icon" id="embedFooterIcon"></div>
+                <input
+                  type="text"
+                  class="embed-field-editable embed-footer-text"
+                  placeholder="Footer text"
+                  data-max-chars="2048"
+                  id="embedFooter"
+                  spellcheck="false"
+                  oninput="updateJson()"
+                />
+                <span class="embed-footer-separator hidden">&bull;</span>
+                <span class="embed-timestamp-text hidden"></span>
+              </div>
+              <div class="embed-url-row" data-inline-group="footer">
+                <span class="embed-url-icon">🔗</span>
+                <input class="embed-inline-url" type="url" data-inline-url="footerIcon" placeholder="Footer icon URL (https://...)" oninput="syncInlineUrl('footerIcon', this, event)">
+              </div>
+
+            </div>
+
+            <!-- Thumbnail -->
+            <img class="embed-thumbnail" id="embedThumbnail" src="" alt="">
+          </div>
+        </div>
+        </div>
+
+        <div class="add-field-btn" onclick="addEmbed()" style="margin-top:10px;">
+          <span>+</span> Add embed
+        </div>
+
+        <!-- Edit hint -->
+        <p class="edit-hint" style="margin-top:8px;">💡 Click any field to edit it directly</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="js/core-mode-markdown.js"></script>
+<script src="js/sync-media.js"></script>
+<script src="js/identity-and-urls.js"></script>
+<script src="js/embeds-fields.js"></script>
+<script src="js/json-builder.js"></script>
+<script src="js/io-storage-webhook.js"></script>
+</body>
+</html>
