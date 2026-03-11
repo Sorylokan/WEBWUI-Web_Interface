@@ -1,0 +1,139 @@
+/* ═══════════════════════ DISCORD MESSAGE ═══════════════════════ */
+.dc-msg {
+  font-family: var(--font-dc);
+  display: flex;
+  padding: 2px 16px;
+  position: relative;
+  min-height: 44px;
+  transition: background .06s;
+}
+.dc-msg:hover { background: var(--dc-msg-hover); }
+
+.dc-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  font-size: 17px;
+  flex-shrink: 0;
+  margin-right: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity .14s;
+  user-select: none;
+}
+.dc-avatar:hover { opacity: .85; }
+.dc-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Avatar hover tip — only in edit mode */
+.av-tip {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity .14s;
+  pointer-events: none;
+  font-family: var(--font);
+}
+.edit-mode .dc-avatar:hover .av-tip { opacity: 1; }
+
+.dc-msg-body { flex: 1; min-width: 0; }
+
+.dc-msg-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+  line-height: 1.375;
+}
+
+.dc-username {
+  font-family: var(--font-dc);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--dc-hi);
+  padding: 0 2px;
+  margin: 0 -2px;
+  border-radius: 3px;
+}
+
+.dc-bot-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: .05em;
+  line-height: 16px;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.dc-timestamp {
+  font-size: .75rem;
+  color: var(--dc-muted);
+  flex-shrink: 0;
+}
+
+.dc-msg-text {
+  font-family: var(--font-dc);
+  font-size: 1rem;
+  color: var(--dc-text);
+  line-height: 1.375;
+  word-break: break-word;
+  white-space: pre-wrap;
+  min-height: 1.375em;
+  padding: 1px 3px;
+  margin: 0 -3px;
+  border-radius: 3px;
+}
+
+/* Embeds container */
+.dc-embeds {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 516px;
+}
+
+/* Add embed button */
+.add-embed-btn {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--r);
+  border: 1.5px dashed var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .13s, color .13s, background .13s;
+  margin-top: 8px;
+}
+.add-embed-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-active);
+}
+.edit-mode .add-embed-btn { display: flex; }

@@ -1,0 +1,80 @@
+/* ═══════════════════════ DISCORD MARKDOWN ═══════════════════════ */
+/* Applied only in preview mode */
+
+.preview-mode .md-b {
+  font-weight: 700;
+}
+
+.preview-mode .md-i {
+  font-style: italic;
+}
+
+.preview-mode .md-u {
+  text-decoration: underline;
+}
+
+.preview-mode .md-s {
+  text-decoration: line-through;
+}
+
+.preview-mode .md-c {
+  background: var(--dc-code-bg);
+  border: 1px solid var(--dc-code-border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: .875em;
+  padding: 0 4px;
+  white-space: pre-wrap;
+}
+
+.preview-mode .md-cb {
+  display: block;
+  background: var(--dc-code-bg);
+  border: 1px solid var(--dc-code-border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: .875em;
+  padding: 8px 12px;
+  margin: 4px 0;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.preview-mode .md-q {
+  border-left: 4px solid var(--text-muted);
+  padding-left: 12px;
+  margin: 2px 0;
+  color: var(--text-muted);
+}
+
+.preview-mode .md-h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.preview-mode .md-h2 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.preview-mode .md-h3 {
+  font-size: 1.125em;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.preview-mode .md-sp {
+  color: var(--text-muted);
+  font-size: .875em;
+}
+
+.preview-mode a {
+  color: var(--dc-link);
+  text-decoration: none;
+}
+
+.preview-mode a:hover {
+  text-decoration: underline;
+}
