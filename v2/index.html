@@ -25,7 +25,7 @@
 <header class="topbar">
   <div class="logo">
     <img src="https://sorylokan.github.io/WEBWUI-Web_Interface/WEBWUI_Icon.svg" alt="Logo" style="width:32px;height:32px">
-    <span class="logo-text">Webhook<em>Builder</em></span>
+    <span class="logo-text">Webhook Embed Builder • <em>[WEB•UI]</em></span>
   </div>
 
   <div class="topbar-spacer"></div>
@@ -60,7 +60,7 @@
         </div>
         <div class="dc-wintitle">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.35"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-          general
+          # general
         </div>
         <span class="dc-winhint">click any element to edit</span>
       </div>
@@ -185,8 +185,8 @@
     </div>
     <div class="pdiv"></div>
     <div class="pf">
-      <label class="pl">Streamer.bot global variable</label>
-      <input id="payloadName" class="pi" type="text" value="WebUIPayload" placeholder="WebUIPayload">
+      <label class="pl">Streamer.bot variable name</label>
+      <input id="payloadName" class="pi" type="text" value="WEBWUI_WebhookPayload" placeholder="WEBWUI_WebhookPayload">
     </div>
     <button class="btn btn-sb btn-send" id="wsSaveBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
@@ -202,19 +202,42 @@
   <div class="pbody" id="panel-json">
     <div class="json-row">
       <button class="btn btn-ghost btn-sm" id="exportJsonBtn" style="flex:1;justify-content:center">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Export
       </button>
       <button class="btn btn-ghost btn-sm" id="importJsonBtn" style="flex:1;justify-content:center">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Import
-      </button>
-      <button class="btn btn-ghost btn-sm btn-icon" id="copyJsonBtn" title="Copy">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </button>
     </div>
     <textarea class="pi" id="jsonOut"></textarea>
+    <div class="json-row">
+      <button class="btn btn-ghost btn-sm btn-full" id="copyRawJsonBtn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copy raw JSON</button>
+      <button class="btn btn-ghost btn-sm btn-full" id="copyAsPayloadBtn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copy as payload</button>
+    </div>
     <p style="font-size:11px;color:var(--text-muted);line-height:1.5">Edit JSON directly to update the editor.</p>
+  </div>
+
+  <!-- INFO BOX -->
+  <div class="info-box">
+    <div class="info-box-row">
+      <span class="info-badge">v2 <em>Beta</em></span>
+      <span class="info-name">WEBWUI Interface</span>
+    </div>
+    <div class="info-box-row info-box-sub">
+      <span>Made with ♥ by <strong>Sorylokan</strong></span>
+    </div>
+    <a href="../index.html" class="info-back-btn">Back to v1</a>
+    <div class="info-box-row info-box-links">
+      <a href="https://github.com/Sorylokan/WEBWUI-Web_Interface" target="_blank" rel="noopener" class="info-link">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </a>
+    </div>
   </div>
 
 </aside>
@@ -227,6 +250,18 @@
   <div class="popover-actions">
     <button class="btn btn-ghost btn-xs" id="popCancelBtn">Cancel</button>
     <button class="btn btn-primary btn-xs" id="popConfirmBtn">OK</button>
+  </div>
+</div>
+
+<!-- FULL LOG MODAL -->
+<div class="log-modal" id="logModal" hidden>
+  <div class="log-modal-backdrop" id="logModalBackdrop"></div>
+  <div class="log-modal-panel" role="dialog" aria-modal="true" aria-labelledby="logModalTitle">
+    <div class="log-modal-head">
+      <strong id="logModalTitle">Full WebSocket Log</strong>
+      <button class="btn btn-ghost btn-xs" id="logModalCloseBtn">Close</button>
+    </div>
+    <pre class="log-modal-body" id="logModalBody"></pre>
   </div>
 </div>
 

@@ -200,6 +200,56 @@
     box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
 }
 
+.v2-callout {
+    margin: 0.9rem 0.9rem 0.6rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(124, 58, 237, 0.55);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(145deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.12));
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.v2-callout-badge {
+    display: inline-block;
+    margin-bottom: 0.45rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #f8b84d;
+    background: rgba(59, 22, 98, 0.75);
+    border: 1px solid rgba(248, 184, 77, 0.45);
+}
+
+.v2-callout p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-main);
+}
+
+.v2-callout-link {
+    display: inline-block;
+    margin-top: 0.65rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(124, 58, 237, 0.55);
+    background: rgba(124, 58, 237, 0.14);
+    color: #d6dcff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.v2-callout-link:hover {
+    border-color: var(--primary);
+    background: rgba(124, 58, 237, 0.24);
+    color: #ffffff;
+}
+
 .right-panel {
     display: flex;
     flex-direction: column;

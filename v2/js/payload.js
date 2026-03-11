@@ -200,9 +200,25 @@ export function importJson() {
   inp.click();
 }
 
-export function copyJson() {
+export function buildStreamerBotEnvelope() {
+  const webhookUrl = document.getElementById('whUrl')?.value.trim() || '';
+  return {
+    payload: collectPayload(),
+    WebHookUrl: webhookUrl,
+    validation: { isValid: true, errors: [], warnings: [] }
+  };
+}
+
+export function copyRawJson() {
   navigator.clipboard
     .writeText(JSON.stringify(collectPayload(), null, 2))
-    .then(() => showToast('Copied', 'info'))
+    .then(() => showToast('Raw JSON copied', 'info'))
+    .catch(() => showToast('Copy failed', 'error'));
+}
+
+export function copyAsPayload() {
+  navigator.clipboard
+    .writeText(JSON.stringify(buildStreamerBotEnvelope()))
+    .then(() => showToast('Payload format copied', 'info'))
     .catch(() => showToast('Copy failed', 'error'));
 }

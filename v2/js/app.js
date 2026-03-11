@@ -15,7 +15,8 @@ import { addEmbed } from './discord.js';
 import {
   exportJson,
   importJson,
-  copyJson,
+  copyRawJson,
+  copyAsPayload,
   onJsonEdit,
   updateJsonPanel,
   collectPayload,
@@ -255,12 +256,29 @@ function attachEventListeners() {
 
   document.getElementById('exportJsonBtn')?.addEventListener('click', exportJson);
   document.getElementById('importJsonBtn')?.addEventListener('click', importJson);
-  document.getElementById('copyJsonBtn')?.addEventListener('click', copyJson);
+  document.getElementById('copyRawJsonBtn')?.addEventListener('click', copyRawJson);
+  document.getElementById('copyAsPayloadBtn')?.addEventListener('click', copyAsPayload);
   document.getElementById('jsonOut')?.addEventListener('input', onJsonEdit);
 
   document.getElementById('popCancelBtn')?.addEventListener('click', closePopover);
   document.getElementById('popConfirmBtn')?.addEventListener('click', confirmPopover);
   document.getElementById('popInput')?.addEventListener('keydown', handlePopoverKey);
+
+  document.addEventListener('click', ev => {
+    const spoiler = ev.target.closest('.md-spoiler');
+    if (!spoiler) return;
+    spoiler.classList.toggle('is-revealed');
+    spoiler.setAttribute('aria-expanded', spoiler.classList.contains('is-revealed') ? 'true' : 'false');
+  });
+
+  document.addEventListener('keydown', ev => {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    const spoiler = ev.target.closest('.md-spoiler');
+    if (!spoiler) return;
+    ev.preventDefault();
+    spoiler.classList.toggle('is-revealed');
+    spoiler.setAttribute('aria-expanded', spoiler.classList.contains('is-revealed') ? 'true' : 'false');
+  });
 
   window.addEventListener('input', () => {
     saveToStorage();

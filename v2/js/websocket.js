@@ -1,9 +1,10 @@
 // WebSocket Streamer.bot integration
-import { collectPayload, loadFromPayload } from './payload.js';
+import { buildStreamerBotEnvelope, loadFromPayload } from './payload.js';
 import { showToast } from './utils.js';
 
 export let wsConnection = null;
 let pendingGetGlobalCleanup = null;
+const MINI_LOG_MAX = 160;
 
 /* ── helpers ── */
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -11,20 +12,37 @@ function pad(n) { return String(n).padStart(2, '0'); }
 function sbLog(type, msg) {
   const log = document.getElementById('sbLog');
   if (!log) return;
+
+  const raw = String(msg || '');
+  const isTruncated = raw.length > MINI_LOG_MAX;
+  const preview = isTruncated ? raw.slice(0, MINI_LOG_MAX) + '…' : raw;
+
   const now = new Date();
   const ts  = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
   const entry = document.createElement('div');
   entry.className = 'sl-entry';
-  entry.innerHTML = `<span class="sl-ts">${ts}</span><span class="sl-msg ${type}">${esc(msg)}</span>`;
+
+  if (isTruncated) {
+    entry.classList.add('has-full-log');
+    entry.dataset.fullLog = raw;
+  }
+
+  const tsEl = document.createElement('span');
+  tsEl.className = 'sl-ts';
+  tsEl.textContent = ts;
+
+  const msgEl = document.createElement('span');
+  msgEl.className = `sl-msg ${type}`;
+  msgEl.textContent = preview;
+
+  entry.appendChild(tsEl);
+  entry.appendChild(msgEl);
   log.appendChild(entry);
   log.scrollTop = log.scrollHeight;
   while (log.children.length > 80) log.removeChild(log.firstChild);
-}
 
-function esc(s) {
-  return String(s || '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // Keep full payloads available in browser devtools
+  console.debug(`[WEBWUI WS ${type}]`, raw);
 }
 
 function setSbStatus(dotClass, txt) {
@@ -50,11 +68,13 @@ export function initWebSocket() {
 
   if (!wsToggleBtn) return;
 
+  initLogModal();
+
   wsToggleBtn.onclick = toggleWebSocket;
   if (wsSaveBtn) wsSaveBtn.onclick = () => saveToStreamerBot();
   if (wsLoadBtn) wsLoadBtn.onclick = () => loadFromStreamerBot();
 
-  // Auto-reconnect if host/port were saved
+  // Restore saved settings
   const wsHost = localStorage.getItem('wsHost');
   const wsPort = localStorage.getItem('wsPort');
   const wsEndpoint = localStorage.getItem('wsEndpoint');
@@ -65,6 +85,45 @@ export function initWebSocket() {
       document.getElementById('wsEndpoint').value = wsEndpoint;
     }
     setTimeout(toggleWebSocket, 100);
+  }
+}
+
+function initLogModal() {
+  const log = document.getElementById('sbLog');
+  const modal = document.getElementById('logModal');
+  const modalBody = document.getElementById('logModalBody');
+  const closeBtn = document.getElementById('logModalCloseBtn');
+  const backdrop = document.getElementById('logModalBackdrop');
+  if (!log || !modal || !modalBody || !closeBtn || !backdrop) return;
+
+  const close = () => {
+    modal.hidden = true;
+    modalBody.textContent = '';
+  };
+
+  const open = (fullLog) => {
+    modalBody.textContent = formatLogForModal(fullLog);
+    modal.hidden = false;
+  };
+
+  log.addEventListener('click', (ev) => {
+    const entry = ev.target.closest('.sl-entry.has-full-log');
+    if (!entry) return;
+    open(entry.dataset.fullLog || '');
+  });
+
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && !modal.hidden) close();
+  });
+}
+
+function formatLogForModal(logText) {
+  try {
+    return JSON.stringify(JSON.parse(logText), null, 2);
+  } catch {
+    return logText;
   }
 }
 
@@ -162,12 +221,13 @@ function setWSButtonState(status, text) {
 }
 
 function handleWSMessage(data) {
-  sbLog('in', data.length > 100 ? data.substring(0, 100) + '…' : data);
+  sbLog('in', data);
   try {
     const msg = JSON.parse(data);
-    if (msg.type === 'DoAction')   handleDoAction(msg);
-    else if (msg.type === 'GetGlobal') handleGetGlobal(msg);
-    else if (msg.type === 'SetGlobal') handleSetGlobal(msg);
+    const kind = msg.request || msg.type;
+    if (kind === 'DoAction')   handleDoAction(msg);
+    else if (kind === 'GetGlobal') handleGetGlobal(msg);
+    else if (kind === 'SetGlobal') handleSetGlobal(msg);
   } catch (err) {
     // non-JSON message — already logged
   }
@@ -179,6 +239,8 @@ function handleDoAction(msg) {
 function handleGetGlobal(msg) { console.log('GetGlobal:', msg); }
 function handleSetGlobal(msg) { console.log('SetGlobal:', msg); }
 
+const WEBWUI_ACTION_ID = '74e1d5e7-a4c8-4799-871f-f444eb8ace03';
+
 export function saveToStreamerBot() {
   if (!wsConnection || wsConnection.readyState !== WebSocket.OPEN) {
     showToast('WebSocket is not connected', 'error');
@@ -186,14 +248,19 @@ export function saveToStreamerBot() {
   }
   try {
     const varName = getPayloadVariableName();
-    const payload = collectPayload();
+    const envelope = buildStreamerBotEnvelope();
+
     const msg = {
-      type:     'SetGlobal',
-      variable: varName,
-      value:    JSON.stringify(payload)
+      request: 'DoAction',
+      id:      '1',
+      action:  { id: WEBWUI_ACTION_ID },
+      args: {
+        variableName: varName,
+        JsonPayload:  JSON.stringify(envelope)
+      }
     };
     wsConnection.send(JSON.stringify(msg));
-    sbLog('out', `SetGlobal → ${varName}`);
+    sbLog('out', `DoAction → WEBWUI handler (var: ${varName})`);
     showToast(`Payload saved to ${varName}`, 'success');
   } catch (err) {
     sbLog('err', err.message);
@@ -208,20 +275,39 @@ export function loadFromStreamerBot() {
   }
   try {
     const varName = getPayloadVariableName();
-    wsConnection.send(JSON.stringify({ type: 'GetGlobal', variable: varName }));
+    const requestId = `webwui:getglobal:${Date.now()}`;
+    wsConnection.send(JSON.stringify({
+      request: 'GetGlobal',
+      id: requestId,
+      variable: varName,
+      persisted: true
+    }));
     sbLog('out', `GetGlobal → ${varName}`);
 
     const handleResponse = (event) => {
       try {
         const response = JSON.parse(event.data);
-        if (response.type === 'GetGlobal' && response.variable === varName) {
-          const payload = JSON.parse(response.value);
+        const kind = response.request || response.type;
+        const matchesGetGlobal = !kind || kind === 'GetGlobal';
+        const matchesRequest = response.id === requestId || response.variable === varName;
+        if (matchesGetGlobal && matchesRequest) {
+          if (response.status === 'error' || response.error) {
+            const reason = response.error || 'Unknown Streamer.bot error';
+            throw new Error(reason);
+          }
+
+          const rawPayload = getGlobalValueFromResponse(response, varName);
+          const payload = parseStoredPayload(rawPayload);
           loadFromPayload(payload);
           sbLog('in', `Payload loaded from ${varName}`);
           showToast(`Payload loaded from ${varName}`, 'success');
           wsConnection.removeEventListener('message', handleResponse);
         }
-      } catch (err) { /* ignore */ }
+      } catch (err) {
+        sbLog('err', err.message || String(err));
+        showToast(`Load failed: ${err.message || 'invalid payload'}`, 'error');
+        wsConnection.removeEventListener('message', handleResponse);
+      }
     };
 
     const activeSocket = wsConnection;
@@ -244,6 +330,49 @@ export function loadFromStreamerBot() {
     sbLog('err', err.message);
     showToast('Error: ' + err.message, 'error');
   }
+}
+
+function getGlobalValueFromResponse(response, varName) {
+  if (typeof response.value !== 'undefined') {
+    return response.value;
+  }
+
+  if (response.variables && response.variables[varName] && typeof response.variables[varName].value !== 'undefined') {
+    return response.variables[varName].value;
+  }
+
+  if (response.variable && typeof response.variable.value !== 'undefined') {
+    return response.variable.value;
+  }
+
+  throw new Error('No variable value found in Streamer.bot response');
+}
+
+function parseStoredPayload(rawValue) {
+  let parsed = rawValue;
+
+  if (typeof parsed === 'string') {
+    parsed = JSON.parse(parsed);
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error('Invalid payload format');
+  }
+
+  // v1/v2 wrapped format: { payload, WebHookUrl, validation }
+  if (Object.prototype.hasOwnProperty.call(parsed, 'payload')) {
+    let inner = parsed.payload;
+    if (typeof inner === 'string') {
+      inner = JSON.parse(inner);
+    }
+    if (inner && typeof inner === 'object') {
+      return inner;
+    }
+    throw new Error('Invalid wrapped payload format');
+  }
+
+  // Raw Discord payload format
+  return parsed;
 }
 
 function getPayloadVariableName() {

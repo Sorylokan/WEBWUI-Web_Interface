@@ -48,6 +48,7 @@ export function renderMarkdown(text) {
   t = t.replace(/^### (.+)$/gm, '<span class="md-h3">$1</span>');
   t = t.replace(/^## (.+)$/gm, '<span class="md-h2">$1</span>');
   t = t.replace(/^# (.+)$/gm, '<span class="md-h1">$1</span>');
+  t = t.replace(/^-# (.+)$/gm, '<span class="md-sub">$1</span>');
 
   t = t.replace(/^&gt; (.+)$/gm, '<span class="md-q">$1</span>');
 
@@ -59,7 +60,7 @@ export function renderMarkdown(text) {
   t = t.replace(/_([^_\n]+)_/g, '<em class="md-i">$1</em>');
 
   t = t.replace(/~~(.+?)~~/g, '<span class="md-s">$1</span>');
-  t = t.replace(/\|\|(.+?)\|\|/g, '<span class="md-sp">$1</span>');
+  t = t.replace(/\|\|(.+?)\|\|/g, '<span class="md-spoiler" role="button" tabindex="0" aria-label="Reveal spoiler" aria-expanded="false">$1</span>');
 
   t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
   t = t.replace(/\n/g, '<br>');

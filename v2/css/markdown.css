@@ -65,9 +65,31 @@
   margin: 4px 0;
 }
 
-.preview-mode .md-sp {
+.preview-mode .md-sub {
   color: var(--text-muted);
   font-size: .875em;
+}
+
+.preview-mode .md-spoiler {
+  display: inline-block;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgba(185, 187, 190, .28);
+  color: transparent;
+  text-shadow: 0 0 6px rgba(0, 0, 0, .45);
+  cursor: pointer;
+  user-select: none;
+  transition: background .14s, color .14s, text-shadow .14s;
+}
+
+.preview-mode .md-spoiler:hover {
+  background: rgba(185, 187, 190, .34);
+}
+
+.preview-mode .md-spoiler.is-revealed {
+  background: rgba(79, 84, 92, .35);
+  color: inherit;
+  text-shadow: none;
 }
 
 .preview-mode a {
