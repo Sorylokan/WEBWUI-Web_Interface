@@ -10,50 +10,74 @@ import {
 import { renderAllEmbeds, updateAvatar } from './discord.js';
 import { onInput, renderMessageContent } from './editor.js';
 
+const DISCORD_LIMITS = {
+  CONTENT: 2000,
+  USERNAME: 80,
+  EMBEDS_MAX: 10,
+  AUTHOR_NAME: 256,
+  TITLE: 256,
+  DESCRIPTION: 4096,
+  FIELD_NAME: 256,
+  FIELD_VALUE: 1024,
+  FIELDS_MAX: 25,
+  FOOTER_TEXT: 2048
+};
+
+function clampText(raw, max, { trim = false } = {}) {
+  let next = typeof raw === 'string' ? raw : '';
+  if (trim) next = next.trim();
+  if (next.length > max) next = next.slice(0, max);
+  return next;
+}
+
 export function collectPayload() {
   const payload = {};
 
-  const username = document.getElementById('usernameEl')?.innerText.trim() || '';
+  const username = clampText(document.getElementById('usernameEl')?.innerText || '', DISCORD_LIMITS.USERNAME, { trim: true });
   const avatar = state.avatarUrl;
 
   if (username) payload.username = username;
   if (avatar) payload.avatar_url = avatar;
 
-  const content = state.messageContent.trim();
+  const content = clampText(state.messageContent, DISCORD_LIMITS.CONTENT, { trim: true });
   if (content) payload.content = content;
 
   if (state.embeds.length) {
-    payload.embeds = state.embeds.map(embed => {
+    payload.embeds = state.embeds.slice(0, DISCORD_LIMITS.EMBEDS_MAX).map(embed => {
       const obj = { color: hexToInt(embed.color) };
 
       if (embed.authorName || embed.authorIconUrl || embed.authorUrl) {
         obj.author = {};
-        if (embed.authorName) obj.author.name = embed.authorName;
+        const authorName = clampText(embed.authorName, DISCORD_LIMITS.AUTHOR_NAME, { trim: true });
+        if (authorName) obj.author.name = authorName;
         if (embed.authorUrl) obj.author.url = embed.authorUrl;
         if (embed.authorIconUrl) obj.author.icon_url = embed.authorIconUrl;
       }
 
-      if (embed.title) {
-        obj.title = embed.title;
+      const title = clampText(embed.title, DISCORD_LIMITS.TITLE, { trim: true });
+      if (title) {
+        obj.title = title;
         if (embed.titleUrl) obj.url = embed.titleUrl;
       }
 
-      if (embed.desc) obj.description = embed.desc;
+      const description = clampText(embed.desc, DISCORD_LIMITS.DESCRIPTION);
+      if (description) obj.description = description;
       if (embed.thumbnailUrl) obj.thumbnail = { url: embed.thumbnailUrl };
       if (embed.imageUrl) obj.image = { url: embed.imageUrl };
 
-      const validFields = embed.fields.filter(field => field.name || field.value);
+      const validFields = embed.fields.filter(field => field.name || field.value).slice(0, DISCORD_LIMITS.FIELDS_MAX);
       if (validFields.length) {
         obj.fields = validFields.map(field => ({
-          name: field.name || '',
-          value: field.value || '',
+          name: clampText(field.name, DISCORD_LIMITS.FIELD_NAME, { trim: true }) || '',
+          value: clampText(field.value, DISCORD_LIMITS.FIELD_VALUE) || '',
           inline: !!field.inline
         }));
       }
 
       if (embed.footerText || embed.footerIconUrl) {
         obj.footer = {};
-        if (embed.footerText) obj.footer.text = embed.footerText;
+        const footerText = clampText(embed.footerText, DISCORD_LIMITS.FOOTER_TEXT, { trim: true });
+        if (footerText) obj.footer.text = footerText;
         if (embed.footerIconUrl) obj.footer.icon_url = embed.footerIconUrl;
       }
 

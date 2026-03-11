@@ -3,6 +3,18 @@ import { state } from './state.js';
 import { renderAllEmbeds, renderMarkdown, updateAvatar, getEmbed } from './discord.js';
 import { updateJsonPanel } from './payload.js';
 
+const DISCORD_LIMITS = {
+  CONTENT: 2000,
+  USERNAME: 80
+};
+
+function clampText(raw, max, { trim = false } = {}) {
+  let next = typeof raw === 'string' ? raw : '';
+  if (trim) next = next.trim();
+  if (next.length > max) next = next.slice(0, max);
+  return next;
+}
+
 let colorPickerInput = null;
 let colorPickerHandler = null;
 
@@ -28,9 +40,16 @@ export function renderMessageContent() {
 }
 
 export function onInput() {
+  const userEl = document.getElementById('usernameEl');
+  if (state.isEditMode && userEl?.isContentEditable) {
+    const username = clampText(userEl.innerText, DISCORD_LIMITS.USERNAME, { trim: true });
+    if (userEl.innerText !== username) userEl.innerText = username;
+  }
+
   const msgEl = document.getElementById('msgTextEl');
   if (state.isEditMode && msgEl?.isContentEditable) {
-    state.messageContent = msgEl.innerText;
+    state.messageContent = clampText(msgEl.innerText, DISCORD_LIMITS.CONTENT);
+    if (msgEl.innerText !== state.messageContent) msgEl.innerText = state.messageContent;
   }
 
   if (!state.avatarUrl) {

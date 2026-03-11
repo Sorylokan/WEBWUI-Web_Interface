@@ -5,9 +5,36 @@ import {
   noNewLine,
   formatEmbedTimestamp,
   getEmbedTimestampForPreview,
-  toDateTimeLocalValue
+  toDateTimeLocalValue,
+  showToast
 } from './utils.js';
 import { onInput, openColorPicker, openPopover } from './editor.js';
+
+const DISCORD_LIMITS = {
+  EMBEDS_MAX: 10,
+  FIELDS_MAX: 25,
+  AUTHOR_NAME: 256,
+  TITLE: 256,
+  DESCRIPTION: 4096,
+  FIELD_NAME: 256,
+  FIELD_VALUE: 1024,
+  FOOTER_TEXT: 2048
+};
+
+function clampText(raw, max, { trim = false } = {}) {
+  let next = typeof raw === 'string' ? raw : '';
+  if (trim) next = next.trim();
+  if (next.length > max) next = next.slice(0, max);
+  return next;
+}
+
+function clampEditableText(el, max, { trim = false } = {}) {
+  const next = clampText(el?.innerText || '', max, { trim });
+  if (el && el.innerText !== next) {
+    el.innerText = next;
+  }
+  return next;
+}
 
 // Markdown parser for Discord syntax
 export function renderMarkdown(text) {
@@ -82,6 +109,11 @@ export function updateAvatar() {
 }
 
 export function addEmbed() {
+  if (state.embeds.length >= DISCORD_LIMITS.EMBEDS_MAX) {
+    showToast('Maximum 10 embeds per message', 'error');
+    return;
+  }
+
   const id = ++state.embedIdCounter;
   state.embeds.push({
     id,
@@ -127,6 +159,11 @@ export function getEmbed(id) {
 export function addField(embedId) {
   const e = getEmbed(embedId);
   if (!e) return;
+
+  if (e.fields.length >= DISCORD_LIMITS.FIELDS_MAX) {
+    showToast('Maximum 25 fields per embed', 'error');
+    return;
+  }
 
   e.fields.push({
     id: ++state.fieldIdCounter,
@@ -187,17 +224,26 @@ function buildEmbedElement(embed, imageCache) {
   const wrap = document.createElement('div');
   wrap.className = 'dc-embed';
   wrap.id = `embed-${embed.id}`;
+  wrap.style.setProperty('--embed-color', embed.color);
+  wrap.style.borderLeftColor = embed.color;
 
-  const bar = document.createElement('div');
-  bar.className = 'dc-embed-bar';
-  bar.style.background = embed.color;
-  bar.title = 'Click to change color';
-  bar.onclick = ev => openColorPicker(ev, embed.color, nextColor => {
-    embed.color = nextColor;
-    bar.style.background = embed.color;
-    onInput();
-  });
-  wrap.appendChild(bar);
+  if (state.isEditMode) {
+    const colorBtn = document.createElement('button');
+    colorBtn.className = 'embed-color-btn';
+    colorBtn.title = 'Change embed color';
+    colorBtn.type = 'button';
+    colorBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 9 9c0-.55-.45-1-1-1h-3.28a2.5 2.5 0 0 1 0-5H20c.55 0 1-.45 1-1a9 9 0 0 0-9-2z"/></svg>`;
+    colorBtn.onclick = ev => {
+      ev.stopPropagation();
+      openColorPicker(ev, embed.color, nextColor => {
+        embed.color = nextColor;
+        wrap.style.setProperty('--embed-color', embed.color);
+        wrap.style.borderLeftColor = embed.color;
+        onInput();
+      });
+    };
+    wrap.appendChild(colorBtn);
+  }
 
   const content = document.createElement('div');
   content.className = 'dc-embed-content cf';
@@ -294,7 +340,7 @@ function appendAuthor(content, embed, imageCache) {
   }
 
   authorName.oninput = () => {
-    embed.authorName = authorName.innerText.trim();
+    embed.authorName = clampEditableText(authorName, DISCORD_LIMITS.AUTHOR_NAME, { trim: true });
     onInput();
   };
   authorName.onkeydown = noNewLine;
@@ -339,7 +385,7 @@ function appendTitle(content, embed) {
     titleEl.dataset.ph = 'Embed title';
     titleEl.innerText = embed.title;
     titleEl.oninput = () => {
-      embed.title = titleEl.innerText.trim();
+      embed.title = clampEditableText(titleEl, DISCORD_LIMITS.TITLE, { trim: true });
       onInput();
     };
     titleEl.onkeydown = noNewLine;
@@ -387,7 +433,7 @@ function appendDescription(content, embed) {
   }
 
   descEl.oninput = () => {
-    embed.desc = descEl.innerText;
+    embed.desc = clampEditableText(descEl, DISCORD_LIMITS.DESCRIPTION);
     onInput();
   };
   content.appendChild(descEl);
@@ -437,7 +483,7 @@ function appendFields(content, embed) {
       fnEl.innerHTML = renderMarkdown(field.name);
     }
     fnEl.oninput = () => {
-      field.name = fnEl.innerText.trim();
+      field.name = clampEditableText(fnEl, DISCORD_LIMITS.FIELD_NAME, { trim: true });
       onInput();
     };
     fnEl.onkeydown = noNewLine;
@@ -455,7 +501,7 @@ function appendFields(content, embed) {
     }
 
     fvEl.oninput = () => {
-      field.value = fvEl.innerText;
+      field.value = clampEditableText(fvEl, DISCORD_LIMITS.FIELD_VALUE);
       onInput();
     };
     fd.appendChild(fvEl);
@@ -534,7 +580,7 @@ function appendFooter(content, embed, imageCache) {
   }
 
   ftEl.oninput = () => {
-    embed.footerText = ftEl.innerText.trim();
+    embed.footerText = clampEditableText(ftEl, DISCORD_LIMITS.FOOTER_TEXT, { trim: true });
     onInput();
   };
   ftEl.onkeydown = noNewLine;
