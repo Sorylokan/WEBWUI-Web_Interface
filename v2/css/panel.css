@@ -266,6 +266,11 @@ textarea.pi {
   gap: 7px;
 }
 
+.info-box-top {
+  justify-content: space-between;
+  align-items: center;
+}
+
 .info-badge {
   display: inline-flex;
   align-items: center;
@@ -299,8 +304,8 @@ textarea.pi {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 3px;
-  padding: 5px 9px;
+  margin-top: 0;
+  padding: 4px 8px;
   width: fit-content;
   border-radius: 7px;
   border: 1px solid var(--border);
@@ -313,6 +318,33 @@ textarea.pi {
 }
 
 .info-back-btn:hover {
+  border-color: var(--accent);
+  background: var(--bg-active);
+  color: var(--text-hi);
+}
+
+.info-box-actions {
+  margin-top: 3px;
+  gap: 7px;
+}
+
+.info-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: border-color .14s, background .14s, color .14s;
+}
+
+.info-action-btn:hover {
   border-color: var(--accent);
   background: var(--bg-active);
   color: var(--text-hi);
