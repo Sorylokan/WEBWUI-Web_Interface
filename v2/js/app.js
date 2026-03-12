@@ -68,6 +68,33 @@ function loadFromStorage() {
   }
 }
 
+function clearEditorData() {
+  loadFromPayload({});
+
+  const whUrl = document.getElementById('whUrl');
+  if (whUrl) whUrl.value = '';
+
+  localStorage.removeItem(config.STORAGE_KEY);
+  updateJsonPanel();
+  validateWebhook();
+}
+
+function handleClearDotClick(ev) {
+  if (!ev.ctrlKey) return;
+
+  ev.preventDefault();
+  ev.stopPropagation();
+
+  const hardReset = ev.shiftKey;
+  if (!hardReset) {
+    const ok = window.confirm('Clear all editor data?\n\nTip: Ctrl+Shift+Click on the red dot skips this confirmation.');
+    if (!ok) return;
+  }
+
+  clearEditorData();
+  showToast(hardReset ? 'Editor data cleared (hard reset)' : 'Editor data cleared', 'info');
+}
+
 function switchPanel(name) {
   state.currentTab = name;
 
@@ -236,6 +263,7 @@ function attachEventListeners() {
   document.getElementById('pill-edit')?.addEventListener('click', () => setMode('edit'));
   document.getElementById('pill-preview')?.addEventListener('click', () => setMode('preview'));
   document.getElementById('themeBtn')?.addEventListener('click', toggleTheme);
+  document.getElementById('dcClearDot')?.addEventListener('click', handleClearDotClick);
 
   document.getElementById('dcAvatar')?.addEventListener('click', ev => openPopover('avatar', null, ev));
 

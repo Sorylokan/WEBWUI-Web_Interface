@@ -82,6 +82,16 @@
 .dc-dot:nth-child(2) { background: #febc2e; }
 .dc-dot:nth-child(3) { background: #28c840; }
 
+#dcClearDot {
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+}
+
+#dcClearDot:hover {
+  transform: scale(1.08);
+  filter: saturate(1.08);
+}
+
 .dc-wintitle {
   font-size: 12px;
   font-weight: 600;
