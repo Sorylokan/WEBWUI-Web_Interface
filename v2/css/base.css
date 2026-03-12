@@ -16,6 +16,29 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Applied only during theme toggle to avoid slowing down normal UI interactions */
+body.theme-transition,
+body.theme-transition * ,
+body.theme-transition *::before,
+body.theme-transition *::after {
+  transition:
+    background-color .4s ease,
+    color .4s ease,
+    border-color .4s ease,
+    box-shadow .4s ease,
+    fill .4s ease,
+    stroke .4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.theme-transition,
+  body.theme-transition * ,
+  body.theme-transition *::before,
+  body.theme-transition *::after {
+    transition: none !important;
+  }
+}
+
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }

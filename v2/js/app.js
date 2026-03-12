@@ -33,9 +33,16 @@ function initTheme() {
 }
 
 function toggleTheme() {
+  document.body.classList.add('theme-transition');
+
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
   applyTheme();
   localStorage.setItem('theme', state.theme);
+
+  // Keep the transition class only for the theme swap moment.
+  window.setTimeout(() => {
+    document.body.classList.remove('theme-transition');
+  }, 320);
 }
 
 function applyTheme() {
