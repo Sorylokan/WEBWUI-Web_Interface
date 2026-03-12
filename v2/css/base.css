@@ -47,7 +47,7 @@ body.theme-transition *::after {
 a { color: var(--dc-link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-[contenteditable]:empty::before {
+.edit-mode [contenteditable]:empty::before {
   content: attr(data-ph);
   color: var(--dc-muted);
   pointer-events: none;

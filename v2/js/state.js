@@ -28,6 +28,8 @@ export const state = {
 
 export const config = {
   STORAGE_KEY: 'webwui-v2-payload',
+  STORAGE_WEBHOOK_URL_KEY: 'webwui-v2-webhook-url',
+  STORAGE_VAR_NAME_KEY: 'webwui-v2-var-name',
   STORAGE_DELAY: 400,
   JSON_UPDATE_DELAY: 700,
   TIMESTAMP_UPDATE_INTERVAL: 30000,

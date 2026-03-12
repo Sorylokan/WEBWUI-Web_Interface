@@ -114,6 +114,20 @@
   max-width: 520px;
 }
 
+/* In preview, Discord-like embeds should size to content instead of stretching full width. */
+.preview-mode .dc-embeds {
+  align-items: flex-start;
+}
+
+.preview-mode .dc-embeds .dc-embed {
+  max-width: 332px;
+  overflow: hidden;
+}
+
+.preview-mode .dc-embeds .dc-embed.has-image {
+  max-width: 432px;
+}
+
 /* Add embed button */
 .add-embed-btn {
   display: none;

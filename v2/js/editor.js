@@ -42,7 +42,7 @@ export function renderMessageContent() {
 export function onInput() {
   const userEl = document.getElementById('usernameEl');
   if (state.isEditMode && userEl?.isContentEditable) {
-    const username = clampText(userEl.innerText, DISCORD_LIMITS.USERNAME, { trim: true });
+    const username = clampText(userEl.innerText, DISCORD_LIMITS.USERNAME);
     if (userEl.innerText !== username) userEl.innerText = username;
   }
 

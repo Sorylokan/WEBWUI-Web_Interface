@@ -56,6 +56,11 @@ function saveToStorage() {
   state.saveStorageTimer = setTimeout(() => {
     try {
       localStorage.setItem(config.STORAGE_KEY, JSON.stringify(collectPayload()));
+
+      const whUrl = document.getElementById('whUrl')?.value || '';
+      const varName = document.getElementById('payloadName')?.value || '';
+      localStorage.setItem(config.STORAGE_WEBHOOK_URL_KEY, whUrl);
+      localStorage.setItem(config.STORAGE_VAR_NAME_KEY, varName);
     } catch (err) {
       console.error('Failed to save to localStorage:', err);
     }
@@ -64,11 +69,24 @@ function saveToStorage() {
 
 function loadFromStorage() {
   try {
+    const whUrlSaved = localStorage.getItem(config.STORAGE_WEBHOOK_URL_KEY);
+    const varNameSaved = localStorage.getItem(config.STORAGE_VAR_NAME_KEY);
+    const whUrlEl = document.getElementById('whUrl');
+    const varNameEl = document.getElementById('payloadName');
+
+    if (whUrlEl && whUrlSaved !== null) whUrlEl.value = whUrlSaved;
+    if (varNameEl && varNameSaved !== null) varNameEl.value = varNameSaved;
+
     const saved = localStorage.getItem(config.STORAGE_KEY);
-    if (!saved) return false;
-    const payload = JSON.parse(saved);
-    loadFromPayload(payload);
-    return true;
+    if (saved) {
+      const payload = JSON.parse(saved);
+      loadFromPayload(payload);
+      validateWebhook();
+      return true;
+    }
+
+    validateWebhook();
+    return false;
   } catch (err) {
     console.error('Failed to load from localStorage:', err);
     return false;
@@ -80,8 +98,12 @@ function clearEditorData() {
 
   const whUrl = document.getElementById('whUrl');
   if (whUrl) whUrl.value = '';
+  const payloadName = document.getElementById('payloadName');
+  if (payloadName) payloadName.value = 'WEBWUI_WebhookPayload';
 
   localStorage.removeItem(config.STORAGE_KEY);
+  localStorage.removeItem(config.STORAGE_WEBHOOK_URL_KEY);
+  localStorage.removeItem(config.STORAGE_VAR_NAME_KEY);
   updateJsonPanel();
   validateWebhook();
 }

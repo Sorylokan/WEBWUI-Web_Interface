@@ -29,9 +29,10 @@ function clampText(raw, max, { trim = false } = {}) {
 }
 
 function clampEditableText(el, max, { trim = false } = {}) {
-  const next = clampText(el?.innerText || '', max, { trim });
-  if (el && el.innerText !== next) {
-    el.innerText = next;
+  const text = el?.textContent || '';
+  const next = clampText(text, max, { trim });
+  if (el && el.textContent !== next) {
+    el.textContent = next;
   }
   return next;
 }
@@ -224,6 +225,8 @@ function getCachedImage(imageCache, cacheKey, className, src, onClick, onError) 
 function buildEmbedElement(embed, imageCache) {
   const wrap = document.createElement('div');
   wrap.className = 'dc-embed';
+  if (embed.imageUrl) wrap.classList.add('has-image');
+  if (embed.thumbnailUrl) wrap.classList.add('has-thumbnail');
   wrap.id = `embed-${embed.id}`;
   wrap.style.setProperty('--embed-color', embed.color);
   wrap.style.borderLeftColor = embed.color;
@@ -335,13 +338,13 @@ function appendAuthor(content, embed, imageCache) {
   authorName.dataset.ph = 'Author name';
 
   if (state.isEditMode) {
-    authorName.innerText = embed.authorName;
+    authorName.textContent = embed.authorName;
   } else {
     authorName.textContent = embed.authorName;
   }
 
   authorName.oninput = () => {
-    embed.authorName = clampEditableText(authorName, DISCORD_LIMITS.AUTHOR_NAME, { trim: true });
+    embed.authorName = clampEditableText(authorName, DISCORD_LIMITS.AUTHOR_NAME);
     onInput();
   };
   authorName.onkeydown = noNewLine;
@@ -386,7 +389,7 @@ function appendTitle(content, embed) {
     titleEl.dataset.ph = 'Embed title';
     titleEl.innerText = embed.title;
     titleEl.oninput = () => {
-      embed.title = clampEditableText(titleEl, DISCORD_LIMITS.TITLE, { trim: true });
+      embed.title = clampEditableText(titleEl, DISCORD_LIMITS.TITLE);
       onInput();
     };
     titleEl.onkeydown = noNewLine;
@@ -428,7 +431,7 @@ function appendDescription(content, embed) {
   descEl.dataset.ph = 'Description... (Markdown supported)';
 
   if (state.isEditMode) {
-    descEl.innerText = embed.desc;
+    descEl.textContent = embed.desc;
   } else {
     descEl.innerHTML = renderMarkdown(embed.desc);
   }
@@ -479,12 +482,12 @@ function appendFields(content, embed) {
     fnEl.contentEditable = state.isEditMode ? 'true' : 'false';
     fnEl.dataset.ph = 'Field name';
     if (state.isEditMode) {
-      fnEl.innerText = field.name;
+      fnEl.textContent = field.name;
     } else {
       fnEl.innerHTML = renderMarkdown(field.name);
     }
     fnEl.oninput = () => {
-      field.name = clampEditableText(fnEl, DISCORD_LIMITS.FIELD_NAME, { trim: true });
+      field.name = clampEditableText(fnEl, DISCORD_LIMITS.FIELD_NAME);
       onInput();
     };
     fnEl.onkeydown = noNewLine;
@@ -496,7 +499,7 @@ function appendFields(content, embed) {
     fvEl.dataset.ph = 'Value';
 
     if (state.isEditMode) {
-      fvEl.innerText = field.value;
+      fvEl.textContent = field.value;
     } else {
       fvEl.innerHTML = renderMarkdown(field.value);
     }
@@ -575,13 +578,13 @@ function appendFooter(content, embed, imageCache) {
   ftEl.dataset.ph = 'Footer text...';
 
   if (state.isEditMode) {
-    ftEl.innerText = embed.footerText;
+    ftEl.textContent = embed.footerText;
   } else {
     ftEl.textContent = embed.footerText;
   }
 
   ftEl.oninput = () => {
-    embed.footerText = clampEditableText(ftEl, DISCORD_LIMITS.FOOTER_TEXT, { trim: true });
+    embed.footerText = clampEditableText(ftEl, DISCORD_LIMITS.FOOTER_TEXT);
     onInput();
   };
   ftEl.onkeydown = noNewLine;
@@ -591,7 +594,7 @@ function appendFooter(content, embed, imageCache) {
   sep.className = 'dc-footer-sep';
   sep.textContent = ' • ';
   const timestampDisplay = formatEmbedTimestamp(getEmbedTimestampForPreview(embed));
-  sep.style.display = (embed.footerText && timestampDisplay) ? '' : 'none';
+  sep.style.display = (!state.isEditMode && embed.footerText && timestampDisplay) ? '' : 'none';
   footerRow.appendChild(sep);
 
   if (state.isEditMode) {
